@@ -1,0 +1,168 @@
+{
+    "deploy_images": {
+        "fedora-ipa-deploy-image": {
+            "type": "image",
+            "image_files":[
+            	{
+            		"name": "fedora-deploy-vmlinuz",
+            		"container_format": "aki",
+            		"disk_format": "aki",
+            		"file_path": "/opt/stack/iso_back/signed-fedora-ipa-deploy-0911.vmlinuz"
+            	},
+            	{
+            		"name": "fedora-deploy-initrd",
+            		"container_format": "ari",
+            		"disk_format": "ari",
+            		"file_path": "/opt/stack/iso_back/signed-fedora-ipa-deploy-0911.initramfs"
+            	}
+            ]
+        },
+        "fedora-ipa-deploy-ramdisk-iso": {
+			"type": "iso",
+			"image_files": [
+				{
+            		"name": "fedora-deploy-iso",
+            		"container_format": "bare",
+            		"disk_format": "iso",
+            		"file_path": "/opt/stack/iso_back/signed-fedora-ipa-deploy-0923-modify.iso"
+				}
+			]
+		}
+    },
+    "user_images": {
+        "signed-ubuntu-fs-image":
+        {
+            "type": "fs",
+            "image_files":[
+            	{
+            		"name": "ubuntu-fs-kernel-kilo0507",
+            		"container_format": "aki",
+            		"disk_format": "aki",
+            		"file_path": "/opt/stack/iso_back/ubuntu-cloud-image-kilo0507.vmlinuz"
+            	},
+            	{
+            		"name": "ubuntu-fs-ramdisk-kilo0507",
+            		"container_format": "ari",
+            		"disk_format": "ari",
+            		"file_path": "/opt/stack/iso_back/ubuntu-cloud-image-kilo0507.initrd"
+            	},
+            	{
+            		"name": "ubuntu-fs-image-kilo0507",
+            		"container_format": "bare",
+            		"disk_format": "qcow2",
+            		"file_path": "/opt/stack/iso_back/ubuntu-cloud-image-kilo0507.qcow2"
+            	}
+            ]
+        },
+		"signed-fedora-fs-image-bootiso":
+		{
+			"type": "fs",
+			"image_files":[
+				{
+            		"name": "fedora-fs-kernel-1009",
+            		"container_format": "aki",
+            		"disk_format": "aki",
+            		"file_path": "/opt/stack/iso_back/fedora-fs-image-1009.vmlinuz"
+            	},
+            	{
+            		"name": "fedora-fs-ramdisk-1009",
+            		"container_format": "ari",
+            		"disk_format": "ari",
+            		"file_path": "/opt/stack/iso_back/fedora-fs-image-1009.initrd"
+            	},
+				{
+            		"name": "fedora-fs-bootiso-1009",
+            		"container_format": "bare",
+            		"disk_format": "iso",
+            		"file_path": "/opt/stack/iso_back/fedora-fs-image-1009-boot.iso"
+            	},
+            	{
+            		"name": "fedora-fs-image-1009",
+            		"container_format": "bare",
+            		"disk_format": "qcow2",
+            		"file_path": "/opt/stack/iso_back/fedora-fs-image-1009.qcow2"
+            	}
+			]
+		},
+		"fedora-disk-image-bios":
+		{
+			"type": "disk",
+			"image_files":[
+				{
+            		"name": "fedora-disk-image-bios-passwd",
+            		"container_format": "bare",
+            		"disk_format": "qcow2",
+            		"file_path": "/opt/stack/iso_back/fedora-diskimage-kilo0423.qcow2"
+            	}
+			]
+		}
+    },
+    "driver_infos":{
+  		"gen8":{
+  			"ilo_address":"10.104.0.5",
+  	        "ilo_username":"admin",
+  	        "ilo_password":"iforgotit",
+  	        "pxe_root_gb":30
+  		}
+  	},
+    "ports":{
+        "gen8":"ec:b1:d7:83:74:40"
+    },
+    "properties":{
+  		"default":{
+  	    	"cpus": 1,
+  	    	"memory_mb": 16384,
+  	    	"local_gb": 650,
+  	    	"cpu_arch": "x86_64"
+  	    }
+  	},
+    "flavors":{
+    	"default":{
+        	"name": "baremetal_flavor_gen8",
+    		"ram": 16384,
+    		"disk": 650,
+    		"vcpus": 1,
+    		"extra_specs":{
+    		}
+    	}
+    },
+    "tasks":{
+        "feature_name":[
+            {
+				"testcases":{
+					"instance_name":"instance1",
+					"driver":"iscsi_ilo",
+					"deploy_image":"fedora-ipa-deploy-ramdisk-iso",
+					"user_image":[
+						"signed-fedora-fs-image",
+						"fedora-disk-image-bios"
+					],
+					"driver_info":[
+						"gen8",
+						"gen9"
+					],
+					"properties":"default",
+					"config_drive":true,
+					"boot_mode":[
+						"uefi",
+						"bios"
+					],
+					"secure_boot":[
+					    "true",
+					    "none"
+					],
+					"boot_option":[
+						"local",
+						"none"
+					]
+				},
+				"filters":[
+					{
+						"driver_info":"gen8",
+						"boot_mode":"uefi"
+					}
+				]
+			}
+        ]
+    }
+}
